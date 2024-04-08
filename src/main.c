@@ -1,67 +1,62 @@
-/*******************************************************************************************
-*
-*   raylib [core] example - Basic window
-*
-*   Welcome to raylib!
-*
-*   To test examples, just press F6 and execute raylib_compile_execute script
-*   Note that compiled executable is placed in the same folder as .c file
-*
-*   You can find all basic examples on C:\raylib\raylib\examples folder or
-*   raylib official webpage: www.raylib.com
-*
-*   Enjoy using raylib. :)
-*
-*   Example originally created with raylib 1.0, last time updated with raylib 1.0
-*
-*   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
-*   BSD-like license that allows static linking with closed source software
-*
-*   Copyright (c) 2013-2024 Ramon Santamaria (@raysan5)
-*
-********************************************************************************************/
-
+#include <stdio.h>
+#include <time.h>
 #include "raylib.h"
 
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
-int main(void)
+// The entry point.
+int main(int argc, char* argv[])
 {
-    // Initialization
-    //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+  // Set up anti-aliasing.
+  SetConfigFlags(FLAG_MSAA_4X_HINT);
 
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+  // Initialize the window.
+  InitWindow(800, 450, "Random Reference Generator");
+  SetTargetFPS(60);
 
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
-    //--------------------------------------------------------------------------------------
+  // Initialize the random number generator.
+  SetRandomSeed(time(NULL));
 
-    // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+  // Initialize cube parameters.
+  Vector3 CubePosition = { 0.0f, 0.0f, 0.0f };
+  float CubeWidth = (float)GetRandomValue(1, 5);
+  float CubeHeight = (float)GetRandomValue(1, 5);
+  float CubeLength = (float)GetRandomValue(1, 5);
+
+  // Initialize the camera.
+  Camera MainCamera = { 0 };
+  MainCamera.position = (Vector3) { 10.0f, (float)GetRandomValue(-10, 10), 10.0f };
+  MainCamera.target = CubePosition;
+  MainCamera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+  MainCamera.fovy = 45.0f;
+  MainCamera.projection = CAMERA_PERSPECTIVE;
+
+  // Enter rendering loop.
+  while (!WindowShouldClose())
+  {
+    // Draw white background.
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    
+    // Draw text.
+    DrawText("Press space to generate a new reference.", GetScreenWidth() / 2 - MeasureText("Press space to generate a new reference.", 20) / 2, GetScreenHeight() - 30, 20, GRAY);
+
+    // Draw cube.
+    BeginMode3D(MainCamera);
+    DrawCube(CubePosition, CubeWidth, CubeHeight, CubeLength, BLUE);
+    DrawCubeWires(CubePosition, CubeWidth, CubeHeight, CubeLength, BLACK);
+    EndMode3D();
+    EndDrawing();
+
+    // Process input.
+    if (IsKeyPressed(KEY_SPACE))
     {
-        // Update
-        //----------------------------------------------------------------------------------
-        // TODO: Update your variables here
-        //----------------------------------------------------------------------------------
-
-        // Draw
-        //----------------------------------------------------------------------------------
-        BeginDrawing();
-
-            ClearBackground(RAYWHITE);
-
-            DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
-
-        EndDrawing();
-        //----------------------------------------------------------------------------------
+      CubeWidth = (float)GetRandomValue(1, 5);
+      CubeHeight = (float)GetRandomValue(1, 5);
+      CubeLength = (float)GetRandomValue(1, 5);
+      MainCamera.position = (Vector3) { 10.0f, (float)GetRandomValue(-10, 10), 10.0f };
     }
+  }
 
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-    CloseWindow();        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
-
-    return 0;
+  // Close window and exit.
+  CloseWindow();
+  return 0;
 }
