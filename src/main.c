@@ -7,6 +7,7 @@ int main(int argc, char* argv[])
 {
   // Set up anti-aliasing.
   SetConfigFlags(FLAG_MSAA_4X_HINT);
+  SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
   // Initialize the window.
   InitWindow(800, 450, "Random Reference Generator");
